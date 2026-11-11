@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <title>Garaj Masini</title>
+    <style>
+        body { font-family: Arial; padding: 20px; }
+        table { border-collapse: collapse; width: 100%; margin-top: 20px; }
+        th, td { border: 1px solid black; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
+    </style>
+    <script>
+    function afiseazaGaraj() {
+        var garaj = localStorage.getItem("garaj") ? JSON.parse(localStorage.getItem("garaj")) : [];
+        var tabel = "<table><tr><th>Tip</th><th>Model</th><th>Culoare</th><th>An</th><th>Acțiune</th></tr>";
+        
+        for(var i = 0; i < garaj.length; i++) {
+            tabel += "<tr>" +
+                "<td>" + garaj[i].tip + "</td>" +
+                "<td>" + garaj[i].model + "</td>" +
+                "<td>" + garaj[i].culoare + "</td>" +
+                "<td>" + garaj[i].anFab + "</td>" +
+                "<td><button onclick='stergeMasina(" + i + ")'>Șterge</button></td>" +
+            "</tr>";
+        }
+        tabel += "</table>";
+        
+        document.getElementById("rezultat").innerHTML = 
+            "<p>Număr de mașini în garaj: <b>" + garaj.length + "</b></p>" + tabel;
+    }
+
+    function adaugaMasina() {
+        var garaj = localStorage.getItem("garaj") ? JSON.parse(localStorage.getItem("garaj")) : [];
+        var masinaNoua = {
+            tip: document.getElementById("tipG").value,
+            model: document.getElementById("modelG").value,
+            culoare: document.getElementById("culoareG").value,
+            anFab: document.getElementById("anG").value
+        };
+        
+        garaj.push(masinaNoua);
+        localStorage.setItem("garaj", JSON.stringify(garaj));
+        
+        afiseazaGaraj();
+        document.getElementById("formGaraj").reset();
+        return false;
+    }
+
+    function stergeMasina(index) {
+        var garaj = JSON.parse(localStorage.getItem("garaj"));
+        garaj.splice(index, 1);
+        localStorage.setItem("garaj", JSON.stringify(garaj));
+        afiseazaGaraj();
+    }
+    </script>
+</head>
+<body onload="afiseazaGaraj()">
+
+    <h2>Administrare Garaj (Vectori JSON Local Storage)</h2>
+    
+    <form id="formGaraj" onsubmit="return adaugaMasina()">
+        <label>Tip: <input id="tipG" required></label>
+        <label>Model: <input id="modelG" required></label>
+        <label>Culoare: <input id="culoareG" required></label>
+        <label>An: <input type="number" id="anG" min="1900" required></label>
+        <button type="submit">Adaugă Mașină</button>
+    </form>
+    
+    <div id="rezultat"></div>
+
+</body>
+</html>
